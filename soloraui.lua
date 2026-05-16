@@ -11,13 +11,13 @@ local function CreateBillboard(character, player)
 
 	local billboardgui = Instance.new("BillboardGui")
 	billboardgui.Name = "PlayerBillboard"
-	billboardgui.Size = UDim2.new(2.5, 0, 5, 0)
+	billboardgui.Size = UDim2.new(2.5, 0, 7, 0)
 	billboardgui.AlwaysOnTop = true
 	billboardgui.Parent = rootPart
 
 	local frame = Instance.new("Frame")
 	frame.Name = "Frame"
-	frame.Size = UDim2.new(1, 0, 0.8, 0)
+	frame.Size = UDim2.new(1, 0, 1, 0)
 	frame.Position = UDim2.new(0, 0, 0.2, 0)
 	frame.BackgroundTransparency = 1
 	frame.Parent = billboardgui
@@ -82,6 +82,18 @@ enabledistanceespb.Size = UDim2.new(0.9, 0, 0, 40)
 enabledistanceespb.Text = "Distance: OFF"
 enabledistanceespb.Parent = scrollingframeesp
 
+local enableplayerimageespb = Instance.new("TextButton")
+enableplayerimageespb.Name = "espplayerimagebutton"
+enableplayerimageespb.Size = UDim2.new(0.9, 0, 0, 40)
+enableplayerimageespb.Text = "Player Image: OFF"
+enableplayerimageespb.Parent = scrollingframeesp
+
+local enablehighlightespb = Instance.new("TextButton")
+enablehighlightespb.Name = "esphighlightbutton"
+enablehighlightespb.Size = UDim2.new(0.9, 0, 0, 40)
+enablehighlightespb.Text = "HighLight: OFF"
+enablehighlightespb.Parent = scrollingframeesp
+
 local enablenameespb = Instance.new("TextButton")
 enablenameespb.Name = "espnamebutton"
 enablenameespb.Size = UDim2.new(0.9, 0, 0, 40)
@@ -103,10 +115,20 @@ distanceEnableValue.Name = "denabled"
 distanceEnableValue.Value = false
 distanceEnableValue.Parent = enabledistanceespb
 
+local PlayerImageEnableValue = Instance.new("BoolValue")
+PlayerImageEnableValue.Name = "denabled"
+PlayerImageEnableValue.Value = false
+PlayerImageEnableValue.Parent = enabledistanceespb
+
 local nameEnableValue = Instance.new("BoolValue")
 nameEnableValue.Name = "nenabled"
 nameEnableValue.Value = false
 nameEnableValue.Parent = enablenameespb
+
+local highlightEnableValue = Instance.new("BoolValue")
+highlightEnableValue.Name = "hlenabled"
+highlightEnableValue.Value = false
+highlightEnableValue.Parent = enablehighlightespb
 
 local function LoadESP()
 	if loadedvalue.Value == true then
@@ -156,7 +178,7 @@ local function ToggleESP()
 end
 
 local function ToggleDistance()
-		distanceEnableValue.Value = not distanceEnableValue.Value
+	distanceEnableValue.Value = not distanceEnableValue.Value
 
 	if distanceEnableValue.Value == true and enablevalue.Value == false then
 		ToggleESP()
@@ -173,49 +195,52 @@ local function ToggleDistance()
 			local rootPart = player.Character:FindFirstChild("HumanoidRootPart")
 
 			if rootPart then
-				local billboard = rootPart:FindFirstChild("PlayerBillboard")
+				local billboard = rootPart:FindFirstChild("DistanceBillboard")
 
-				if billboard then
-					local frame = billboard:FindFirstChild("Frame")
+				if distanceEnableValue.Value == false then
+					if billboard then
+						billboard:Destroy()
+					end
+				else
+					if not billboard then
+						local billboardgui = Instance.new("BillboardGui")
+						billboardgui.Name = "DistanceBillboard"
+						billboardgui.Size = UDim2.new(2.5, 0, 2, 0)
+						billboardgui.ExtentsOffset = Vector3.new(0,4.5,0)
+						billboardgui.AlwaysOnTop = true
+						billboardgui.Parent = rootPart
 
-					if frame then
-						local oldLabel = frame:FindFirstChild("distancelabel")
+						local distancebox = Instance.new("TextLabel")
+						distancebox.Name = "distancelabel"
+						distancebox.BackgroundTransparency = 1
+						distancebox.TextScaled = true
+						distancebox.Size = UDim2.new(1, 0, 1, 0)
+						distancebox.TextColor3 = Color3.fromRGB(255, 255, 255)
+						distancebox.TextStrokeTransparency = 0
+						distancebox.TextStrokeColor3 = Color3.fromRGB(0,0,0)
+						distancebox.Text = "..."
+						distancebox.AnchorPoint = Vector2.new(0.5,0.5)
+						distancebox.Position = UDim2.new(0.5,0,0.5,0)
+						distancebox.Parent = billboardgui
 
-						if distanceEnableValue.Value == false then
-							if oldLabel then
-								oldLabel:Destroy()
-							end
-						else
-							if not oldLabel then
-								local distancebox = Instance.new("TextLabel")
-								distancebox.Name = "distancelabel"
-								distancebox.BackgroundTransparency = 1
-								distancebox.TextScaled = true
-								distancebox.Size = UDim2.new(1, 0, 0.2, 0)
-								distancebox.TextColor3 = Color3.fromRGB(255, 0, 0)
-								distancebox.Text = "..."
-								distancebox.Parent = frame
+						task.spawn(function()
+							while distancebox.Parent and distanceEnableValue.Value == true do
+								task.wait(0.2)
 
-								task.spawn(function()
-									while distancebox.Parent and distanceEnableValue.Value == true do
-										task.wait(0.2)
+								local myCharacter = localPlayer.Character
+								local targetCharacter = player.Character
 
-										local myCharacter = localPlayer.Character
-										local targetCharacter = player.Character
+								if myCharacter and targetCharacter then
+									local myRoot = myCharacter:FindFirstChild("HumanoidRootPart")
+									local targetRoot = targetCharacter:FindFirstChild("HumanoidRootPart")
 
-										if myCharacter and targetCharacter then
-											local myRoot = myCharacter:FindFirstChild("HumanoidRootPart")
-											local targetRoot = targetCharacter:FindFirstChild("HumanoidRootPart")
-
-											if myRoot and targetRoot then
-												local distance = (myRoot.Position - targetRoot.Position).Magnitude
-												distancebox.Text = math.floor(distance) .. " studs"
-											end
-										end
+									if myRoot and targetRoot then
+										local distance = (myRoot.Position - targetRoot.Position).Magnitude
+										distancebox.Text = math.floor(distance) .. "M"
 									end
-								end)
+								end
 							end
-						end
+						end)
 					end
 				end
 			end
@@ -260,12 +285,10 @@ local function ToggleName()
 								namebox.BackgroundTransparency = 1
 								namebox.TextScaled = true
 								namebox.Size = UDim2.new(1, 0, 0.2, 0)
-
-								-- Offset above the frame
 								namebox.Position = UDim2.new(0, 0, -0.25, 0)
-
 								namebox.TextColor3 = Color3.fromRGB(255, 255, 255)
 								namebox.TextStrokeTransparency = 0
+								namebox.TextStrokeColor3 = Color3.fromRGB(0,0,0)
 								namebox.Text = player.Name
 								namebox.Parent = frame
 							end
@@ -277,6 +300,43 @@ local function ToggleName()
 	end
 end
 
+local function ToggleHighLight()
+	highlightEnableValue.Value = not highlightEnableValue.Value
+
+	if highlightEnableValue.Value == true and enablevalue.Value == false then
+		ToggleESP()
+	end
+
+	if highlightEnableValue.Value == true then
+		enablehighlightespb.Text = "HighLight: ON"
+	else
+		enablehighlightespb.Text = "HighLight: OFF"
+	end
+
+	for _, player in ipairs(Players:GetPlayers()) do
+		if player ~= localPlayer and player.Character then
+			local rootPart = player.Character:FindFirstChild("HumanoidRootPart")
+
+			if rootPart then
+				local HighLight = rootPart.Parent:FindFirstChild("esphighlight")
+
+				if highlightEnableValue.Value == false then
+					if HighLight then
+						HighLight:Destroy()
+					end
+				else
+					if not HighLight then
+						local hlbox = Instance.new("Highlight")
+						hlbox.Name = "esphighlight"
+						hlbox.Parent = rootPart.Parent
+					end
+				end
+			end
+		end
+	end
+end
+
 enableespb.MouseButton1Click:Connect(ToggleESP)
 enabledistanceespb.MouseButton1Click:Connect(ToggleDistance)
 enablenameespb.MouseButton1Click:Connect(ToggleName)
+enablehighlightespb.MouseButton1Click:Connect(ToggleHighLight)
