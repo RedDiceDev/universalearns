@@ -49,12 +49,27 @@ mgui.Name = "mainGui"
 mgui.ResetOnSpawn = false
 mgui.Parent = localPlayer:WaitForChild("PlayerGui")
 
+local bopen = Instance.new("ImageButton")
+bopen.Size = UDim2.new(0.1,0,0.1,0)
+bopen.AnchorPoint = Vector2.new(0.5,0.5)
+bopen.Position = UDim2.new(0.9,0,0.1,0)
+bopen.Name = "ImageButton"
+bopen.Image = "rbxassetid://111689602168506"
+bopen.Parent = mgui
+
 local mframe = Instance.new("Frame")
 mframe.Size = UDim2.new(0.5, 0, 0.7, 0)
 mframe.AnchorPoint = Vector2.new(0.5, 0.5)
 mframe.Position = UDim2.new(0.5, 0, 0.5, 0)
 mframe.Name = "espframe"
 mframe.Parent = mgui
+
+local bclose = Instance.new("TextButton")
+bclose.Size = UDim2.new(0.1,0,0.1,0)
+bclose.AnchorPoint = Vector2.new(0.5,0.5)
+bclose.Position = UDim2.new(0.9,0,0.1,0)
+bclose.Name = "close"
+bclose.Parent = mframe
 
 local scrollingframeesp = Instance.new("ScrollingFrame")
 scrollingframeesp.Size = UDim2.new(0.8, 0, 0.7, 0)
@@ -64,6 +79,16 @@ scrollingframeesp.CanvasSize = UDim2.new(0, 0, 0, 0)
 scrollingframeesp.AutomaticCanvasSize = Enum.AutomaticSize.Y
 scrollingframeesp.ScrollBarThickness = 6
 scrollingframeesp.Parent = mframe
+
+local scrollingframeworld = Instance.new("ScrollingFrame")
+scrollingframeworld.Size = UDim2.new(0.8, 0, 0.7, 0)
+scrollingframeworld.AnchorPoint = Vector2.new(0.5, 0.5)
+scrollingframeworld.Position = UDim2.new(0.6, 0, 0.5, 0)
+scrollingframeworld.CanvasSize = UDim2.new(0, 0, 0, 0)
+scrollingframeworld.AutomaticCanvasSize = Enum.AutomaticSize.Y
+scrollingframeworld.ScrollBarThickness = 6
+scrollingframeworld.Visible = false
+scrollingframeworld.Parent = mframe
 
 local muilist = Instance.new("UIListLayout")
 muilist.Name = "mainuilist"
@@ -81,12 +106,6 @@ enabledistanceespb.Name = "espdistancebutton"
 enabledistanceespb.Size = UDim2.new(0.9, 0, 0, 40)
 enabledistanceespb.Text = "Distance: OFF"
 enabledistanceespb.Parent = scrollingframeesp
-
-local enableplayerimageespb = Instance.new("TextButton")
-enableplayerimageespb.Name = "espplayerimagebutton"
-enableplayerimageespb.Size = UDim2.new(0.9, 0, 0, 40)
-enableplayerimageespb.Text = "Player Image: OFF"
-enableplayerimageespb.Parent = scrollingframeesp
 
 local enablehighlightespb = Instance.new("TextButton")
 enablehighlightespb.Name = "esphighlightbutton"
@@ -114,11 +133,6 @@ local distanceEnableValue = Instance.new("BoolValue")
 distanceEnableValue.Name = "denabled"
 distanceEnableValue.Value = false
 distanceEnableValue.Parent = enabledistanceespb
-
-local PlayerImageEnableValue = Instance.new("BoolValue")
-PlayerImageEnableValue.Name = "denabled"
-PlayerImageEnableValue.Value = false
-PlayerImageEnableValue.Parent = enabledistanceespb
 
 local nameEnableValue = Instance.new("BoolValue")
 nameEnableValue.Name = "nenabled"
@@ -205,7 +219,7 @@ local function ToggleDistance()
 					if not billboard then
 						local billboardgui = Instance.new("BillboardGui")
 						billboardgui.Name = "DistanceBillboard"
-						billboardgui.Size = UDim2.new(2.5, 0, 2, 0)
+						billboardgui.Size = UDim2.new(0, 50, 0, 50)
 						billboardgui.ExtentsOffset = Vector3.new(0,4.5,0)
 						billboardgui.AlwaysOnTop = true
 						billboardgui.Parent = rootPart
@@ -266,33 +280,32 @@ local function ToggleName()
 			local rootPart = player.Character:FindFirstChild("HumanoidRootPart")
 
 			if rootPart then
-				local billboard = rootPart:FindFirstChild("PlayerBillboard")
+				local billboard = rootPart:FindFirstChild("NameBillboard")
 
-				if billboard then
-					local frame = billboard:FindFirstChild("Frame")
+				if nameEnableValue.Value == false then
+					if billboard then
+						billboard:Destroy()
+					end
+				else
+					if not billboard then
+						local billboardgui = Instance.new("BillboardGui")
+						billboardgui.Name = "NameBillboard"
+						billboardgui.Size = UDim2.new(0, 50, 0, 50)
+						billboardgui.AlwaysOnTop = true
+						billboardgui.Parent = rootPart
 
-					if frame then
-						local oldLabel = frame:FindFirstChild("namelabel")
-
-						if nameEnableValue.Value == false then
-							if oldLabel then
-								oldLabel:Destroy()
-							end
-						else
-							if not oldLabel then
-								local namebox = Instance.new("TextLabel")
-								namebox.Name = "namelabel"
-								namebox.BackgroundTransparency = 1
-								namebox.TextScaled = true
-								namebox.Size = UDim2.new(1, 0, 0.2, 0)
-								namebox.Position = UDim2.new(0, 0, -0.25, 0)
-								namebox.TextColor3 = Color3.fromRGB(255, 255, 255)
-								namebox.TextStrokeTransparency = 0
-								namebox.TextStrokeColor3 = Color3.fromRGB(0,0,0)
-								namebox.Text = player.Name
-								namebox.Parent = frame
-							end
-						end
+						local distancebox = Instance.new("TextLabel")
+						distancebox.Name = "namelabel"
+						distancebox.BackgroundTransparency = 1
+						distancebox.TextScaled = true
+						distancebox.Size = UDim2.new(1, 0, 1, 0)
+						distancebox.TextColor3 = Color3.fromRGB(255, 255, 255)
+						distancebox.TextStrokeTransparency = 0
+						distancebox.TextStrokeColor3 = Color3.fromRGB(0,0,0)
+						distancebox.Text = Players.LocalPlayer.Name
+						distancebox.AnchorPoint = Vector2.new(0.5,0.5)
+						distancebox.Position = UDim2.new(0.5,0,0.5,0)
+						distancebox.Parent = billboardgui
 					end
 				end
 			end
@@ -336,7 +349,17 @@ local function ToggleHighLight()
 	end
 end
 
+local function Closegui()
+	Players.LocalPlayer.PlayerGui.mainGui.espframe.Visible = false
+end
+
+local function Opengui()
+	Players.LocalPlayer.PlayerGui.mainGui.espframe.Visible = true
+end
+
 enableespb.MouseButton1Click:Connect(ToggleESP)
 enabledistanceespb.MouseButton1Click:Connect(ToggleDistance)
 enablenameespb.MouseButton1Click:Connect(ToggleName)
 enablehighlightespb.MouseButton1Click:Connect(ToggleHighLight)
+bclose.MouseButton1Click:Connect(Closegui)
+bopen.MouseButton1Click:Connect(Opengui)
